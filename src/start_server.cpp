@@ -1,22 +1,11 @@
-#include <iostream>
 #include "headers/start_server.h"
-#include "headers/cleanup_socket.h"
-#include <thread>
-
-// for now only windows
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#pragma comment (lib, "Ws2_32.lib")
-// -l ws_32.lib
-
 
 void start_server() {
 	
 	WSADATA wsa_data;
 	int result;
 
-	SOCKET server_socket = INVALID_SOCKET;
-	SOCKET client_socket = INVALID_SOCKET;
+	SOCKET server_socket, client_socket;
 	
 	struct addrinfo hints, *res, *p;
 	struct sockaddr_in client_addr;
@@ -42,35 +31,39 @@ void start_server() {
 
 		if (server_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol) < 0) {
 			std::cerr << "Failed to create socket\n";
-			continue;
+			return;
+		}
+
+		int opt = 1;
+		if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) == -1) {
+			perror("setsockopt");
+			return;
 		}
 
 		if (bind(server_socket, p->ai_addr, p->ai_addrlen) < 0) {
 			std::cerr << "Failed to bind socket\n";
 			cleanup_socket(server_socket);
-			continue;
+			return;
 		}
 		
-		if (listen(server_socket, 5) < 0) {
-			std::cerr << "Failed to listen on socket\n";
-			cleanup_socket(server_socket);
-			continue;
-		}
-
-		std::cout << "Server listening on port " << PORT << "\n";
-
-		break;
 	}
 
-	std::cout << "Server: waiting for connections...\n";
+	freeaddrinfo(res);
+
+	if (listen(server_socket, 5) < 0) {
+			std::cerr << "Failed to listen on socket\n";
+			cleanup_socket(server_socket);
+			return;
+		}
+	std::cout << "Server listening on port " << PORT << "\n";
 
 	while (true) {
 		
 		client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
 		
-		// if (client_socket >= 0) {
-		// 	std::thread()
-		// }
+		if (client_socket >= 0) {
+			std::thread(handle_client, client_socket).detach();
+		}
 	}
 
 	cleanup_socket(server_socket);

@@ -1,5 +1,7 @@
 #include "headers/serve_file.h"
 
+namespace fs = std::filesystem;
+const std::string SHARED_DIR = "./shared_files";
 std::string serve_file(const std::string &filename, int client_socket) {
     std::string file_path = SHARED_DIR + "/" + filename;
     if (!fs::exists(file_path)) {

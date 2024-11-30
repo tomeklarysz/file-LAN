@@ -1,6 +1,6 @@
 #include "headers/list_files.h"
 
-
+namespace fs = std::filesystem;
 std::string list_files() {
     std::ostringstream response;
     response << "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n";
