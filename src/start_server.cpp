@@ -5,10 +5,10 @@ void start_server() {
 	WSADATA wsa_data;
 	int result;
 
-	SOCKET server_socket, client_socket;
+	int server_socket, client_socket;
 	
 	struct addrinfo hints, *res, *p;
-	struct sockaddr_in client_addr;
+	struct sockaddr_in client_addr {};
 	socklen_t client_len = sizeof(client_addr);
 
 	// initialize socket
@@ -29,7 +29,7 @@ void start_server() {
 
 	for (p = res; p != NULL; p = p->ai_next) {
 
-		if (server_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol) < 0) {
+		if ((server_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) < 0) {
 			std::cerr << "Failed to create socket\n";
 			return;
 		}
@@ -54,13 +54,15 @@ void start_server() {
 			std::cerr << "Failed to listen on socket\n";
 			cleanup_socket(server_socket);
 			return;
-		}
+	}
 	std::cout << "Server listening on port " << PORT << "\n";
 
 	while (true) {
 		
 		client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
 		
+		printf("server got connection");
+
 		if (client_socket >= 0) {
 			std::thread(handle_client, client_socket).detach();
 		}

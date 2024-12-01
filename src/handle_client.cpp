@@ -2,8 +2,8 @@
 #
 
 void handle_client(int client_socket) {
-  char buffer[DEFAULT_BUFLEN];
-  int bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
+    char buffer[DEFAULT_BUFLEN] = {0};
+  int bytes_received = recv(client_socket, buffer, DEFAULT_BUFLEN - 1, 0);
   if (bytes_received <= 0) {
     cleanup_socket(client_socket);
     return;

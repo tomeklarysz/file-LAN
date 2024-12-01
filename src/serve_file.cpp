@@ -14,7 +14,7 @@ std::string serve_file(const std::string &filename, int client_socket) {
     }
 
     // Send HTTP headers
-    std::ostringstream headers;
+    std::ostringstream headers{};
     headers << "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
     send(client_socket, headers.str().c_str(), headers.str().size(), 0);
 
