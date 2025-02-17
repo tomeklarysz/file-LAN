@@ -69,8 +69,6 @@ void start_server() {
 		
 		client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_len);
 		
-		printf("server got connection");
-
 		if (client_socket >= 0) {
 			std::thread(handle_client, client_socket).detach();
 		}
