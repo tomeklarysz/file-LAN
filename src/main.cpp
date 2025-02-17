@@ -1,7 +1,8 @@
 #include "headers/start_server.h"
+#include <filesystem>
 
 int main() {
-  if (std::filesystem::exists(SHARED_DIR)) {
+  if (!std::filesystem::exists(SHARED_DIR)) {
     std::filesystem::create_directory(SHARED_DIR);
   }
 

@@ -69,13 +69,15 @@ void handle_client(int client_socket) {
             
             if (!serve_file(filename, client_socket)) {
                 send_http_response(client_socket, 404, "text/plain", "File not found: " + filename);
+                cleanup_socket(client_socket);
             }
         } else {
             send_http_response(client_socket, 404, "text/plain", "Unknown endpoint");
+            cleanup_socket(client_socket);
         }
     } else {
         send_http_response(client_socket, 400, "text/plain", "Unsupported method");
+        cleanup_socket(client_socket);
     }
 
-    cleanup_socket(client_socket);
 }
