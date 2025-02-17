@@ -29,13 +29,16 @@ void start_server() {
 
 	for (p = res; p != NULL; p = p->ai_next) {
 
-		if (server_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol) < 0) {
+		server_socket = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+		if (server_socket < 0) {
 			std::cerr << "Failed to create socket\n";
 			return;
 		}
 
+		printf("socket: %d\n",server_socket);
+
 		int opt = 1;
-		if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) == -1) {
+		if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof(opt)) == -1) {
 			perror("setsockopt");
 			return;
 		}
@@ -45,7 +48,12 @@ void start_server() {
 			cleanup_socket(server_socket);
 			return;
 		}
-		
+		break;
+	}
+
+	if (p == NULL) {
+		std::cerr << "Failed to bind to any address\n";
+		return;
 	}
 
 	freeaddrinfo(res);
