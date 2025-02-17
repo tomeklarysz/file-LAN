@@ -25,7 +25,7 @@ void start_server() {
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_flags = AI_PASSIVE;
 
-	getaddrinfo(NULL, PORT, &hints, &res);
+	getaddrinfo("0.0.0.0", PORT, &hints, &res);
 
 	for (p = res; p != NULL; p = p->ai_next) {
 
